@@ -17,14 +17,17 @@ keys = {
 }
 
 running = True
-
 playerpos = [100, 100] # initial position for player
+
+score = 0 
+arrows = [] # list of arrows
 
 # 3 - Load Game Assets ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 3.1 - Load Images
 player = pygame.image.load("resources/images/dude.png")
 grass = pygame.image.load("resources/images/grass.png")
 castle = pygame.image.load("resources/images/castle.png")
+arrow = pygame.image.load("resources/images/bullet.png")
 
 ## 4 - The Game Loop ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 while(running):
@@ -51,6 +54,22 @@ while(running):
     new_playerpos = (playerpos[0] - player_rotation.get_rect().width / 2, playerpos[1] - player_rotation.get_rect().height / 2)
     screen.blit(player_rotation, new_playerpos)
 
+    # 6.1 - Draw arrows
+    for bullet in arrows:
+        arrow_index = 0
+        velx=math.cos(bullet[0])*10
+        vely=math.sin(bullet[0])*10
+        bullet[1]+=velx
+        bullet[2]+=vely
+        if bullet[1] < -64 or bullet[1] > width or bullet[2] < -64 or bullet[2] > height:
+            arrows.pop(arrow_index)
+        arrow_index += 1
+        # draw the arrow
+        for projectile in arrows:
+            new_arrow = pygame.transform.rotate(arrow, 360-projectile[0]*57.29)
+            screen.blit(new_arrow, (projectile[1], projectile[2]))
+
+
     # 7 - Update the sceeen ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pygame.display.flip()
 
@@ -60,6 +79,10 @@ while(running):
         if event.type == pygame.QUIT:
             pygame.quit()
             exit(0)
+
+        # Fire!!
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            arrows.append([angle, new_playerpos[0]+32, new_playerpos[1]+32])
 
         # chek the keydown and keyup
         if event.type == pygame.KEYDOWN:
