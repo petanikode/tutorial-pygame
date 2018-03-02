@@ -2,6 +2,7 @@
 import math
 import pygame
 from pygame.locals import *
+from random import randint
 
 # 2 - Initialize the Game ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 pygame.init()
@@ -22,12 +23,16 @@ playerpos = [100, 100] # initial position for player
 score = 0 
 arrows = [] # list of arrows
 
+enemy_timer = 100 # waktu kemunculan
+enemies = [[width, 100]] # list yang menampung koordinat musuh
+
 # 3 - Load Game Assets ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 3.1 - Load Images
 player = pygame.image.load("resources/images/dude.png")
 grass = pygame.image.load("resources/images/grass.png")
 castle = pygame.image.load("resources/images/castle.png")
 arrow = pygame.image.load("resources/images/bullet.png")
+enemy_img = pygame.image.load("resources/images/badguy.png")
 
 ## 4 - The Game Loop ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 while(running):
@@ -69,6 +74,26 @@ while(running):
             new_arrow = pygame.transform.rotate(arrow, 360-projectile[0]*57.29)
             screen.blit(new_arrow, (projectile[1], projectile[2]))
 
+    # 6.2 - Draw Enemy
+    # waktu musuh akan muncul
+    enemy_timer -= 1
+    if enemy_timer == 0:
+        # buat musuh baru
+        enemies.append([width, randint(50, height-32)])
+        # reset enemy timer to random time
+        enemy_timer = randint(1, 100)
+
+    index = 0
+    for enemy in enemies:
+        # musuh bergerak dengan kecepatan 5 pixel ke kiri
+        enemy[0] -= 5
+        # hapus musuh saat mencapai batas layar sebelah kiri
+        if enemy[0] < -64:
+            enemies.pop(index)
+
+    # gambar musuh ke layar
+    for enemy in enemies:
+        screen.blit(enemy_img, enemy)
 
     # 7 - Update the sceeen ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pygame.display.flip()
