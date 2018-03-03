@@ -20,7 +20,9 @@ keys = {
 running = True
 playerpos = [100, 100] # initial position for player
 
-score = 0 
+score = 0
+health_point = 194
+countdown_timer = 90000 # 90 detik
 arrows = [] # list of arrows
 
 enemy_timer = 100 # waktu kemunculan
@@ -33,6 +35,8 @@ grass = pygame.image.load("resources/images/grass.png")
 castle = pygame.image.load("resources/images/castle.png")
 arrow = pygame.image.load("resources/images/bullet.png")
 enemy_img = pygame.image.load("resources/images/badguy.png")
+healthbar = pygame.image.load("resources/images/healthbar.png")
+health = pygame.image.load("resources/images/health.png")
 
 ## 4 - The Game Loop ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 while(running):
@@ -98,6 +102,7 @@ while(running):
         # benturan musuh dengan markas kelinci
         if enemy_rect.left < 64:
             enemies.pop(index)
+            health_point -= randint(5,20)
             print("Oh tidak, kita diserang!!")
         
         # 6.2.2 Check for collisions between enemies and arrows
@@ -119,6 +124,21 @@ while(running):
     # gambar musuh ke layar
     for enemy in enemies:
         screen.blit(enemy_img, enemy)
+
+    # 6.3 - Draw Health bar
+    screen.blit(healthbar, (5,5))
+    for hp in range(health_point):
+        screen.blit(health, (hp+8, 8))
+
+    # 6.4 - Draw clock
+    font = pygame.font.Font(None, 24)
+    minutes = int((countdown_timer-pygame.time.get_ticks())/60000) # 60000 itu sama dengan 60 detik
+    seconds = int((countdown_timer-pygame.time.get_ticks())/1000%60)
+    time_text = "{:02}:{:02}".format(minutes, seconds)
+    clock = font.render(time_text, True, (255,255,255))
+    textRect = clock.get_rect()
+    textRect.topright = [635, 5]
+    screen.blit(clock, textRect)
 
     # 7 - Update the sceeen ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pygame.display.flip()
