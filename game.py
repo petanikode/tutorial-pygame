@@ -20,6 +20,11 @@ keys = {
 running = True
 playerpos = [100, 100] # initial position for player
 
+# exit code for game over and win codition
+exitcode = 0
+EXIT_CODE_GAME_OVER = 0
+EXIT_CODE_WIN = 1
+
 score = 0
 health_point = 194
 countdown_timer = 90000 # 90 detik
@@ -37,6 +42,8 @@ arrow = pygame.image.load("resources/images/bullet.png")
 enemy_img = pygame.image.load("resources/images/badguy.png")
 healthbar = pygame.image.load("resources/images/healthbar.png")
 health = pygame.image.load("resources/images/health.png")
+gameover = pygame.image.load("resources/images/gameover.png")
+youwin = pygame.image.load("resources/images/youwin.png")
 
 ## 4 - The Game Loop ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 while(running):
@@ -184,3 +191,36 @@ while(running):
         playerpos[0] -= 5 # kurangi nilai x
     elif keys["right"]:
         playerpos[0] += 5 # tambah nilai x
+
+
+    # 10 - Win/Lose check ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    if pygame.time.get_ticks() > countdown_timer:
+        running = False
+        exitcode = EXIT_CODE_WIN
+    if health_point <= 0:
+        running = False
+        exitcode = EXIT_CODE_GAME_OVER
+
+# - End of Game Loop ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+# 11 - Win/lose display ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+if exitcode == EXIT_CODE_GAME_OVER:
+    screen.blit(gameover, (0, 0))
+else:
+    screen.blit(youwin, (0, 0))
+
+# Tampilkan score
+text = font.render("Score: {}".format(score), True, (255, 255, 255))
+textRect = text.get_rect()
+textRect.centerx = screen.get_rect().centerx
+textRect.centery = screen.get_rect().centery + 24
+screen.blit(text, textRect)
+
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            exit(0)
+    pygame.display.flip()
