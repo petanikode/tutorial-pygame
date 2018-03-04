@@ -176,6 +176,7 @@ while(running):
         # Fire!!
         if event.type == pygame.MOUSEBUTTONDOWN:
             arrows.append([angle, new_playerpos[0]+32, new_playerpos[1]+32])
+            shoot_sound.play()
 
         # chek the keydown and keyup
         if event.type == pygame.KEYDOWN:
